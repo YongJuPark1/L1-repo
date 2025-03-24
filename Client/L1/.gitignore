@@ -1,0 +1,28 @@
+# Unreal Engine Generated Folders
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+Build/
+.vs/
+.idea/
+.vscode/
+
+# Asset Files
+*.uasset
+*.umap
+*.fbx
+*.wav
+*.mp4
+*.png
+*.jpg
+
+# OS 및 에디터 설정 파일
+.DS_Store
+Thumbs.db
+*.suo
+*.user
+*.VC.db
+*.opensdf
+*.sdf
+*.log
