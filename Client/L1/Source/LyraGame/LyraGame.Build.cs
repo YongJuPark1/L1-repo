@@ -8,13 +8,17 @@ public class LyraGame : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicIncludePaths.AddRange(
-			new string[] {
-				"LyraGame"
-			}
-		);
+        PublicIncludePaths.AddRange(
+                    new string[] {
+                "LyraGame",
+                "LyraGame/L1/ThirdParty",
+                "LyraGame/L1/ThirdParty/msgpack",
+                "LyraGame/L1/ThirdParty/msgpack/msgpack/adaptor",
+                "LyraGame/L1/Utils",
+                    }
+                );
 
-		PrivateIncludePaths.AddRange(
+        PrivateIncludePaths.AddRange(
 			new string[] {
 			}
 		);
@@ -42,8 +46,12 @@ public class LyraGame : ModuleRules
 				"Niagara",
 				"AsyncMixin",
 				"ControlFlows",
-				"PropertyPath"
-			}
+				"PropertyPath",
+                "Sockets", //TCP
+				"Networking", //TCP
+				"Json", //JSON
+                "JsonUtilities", // JSON
+            }
 		);
 
 		PrivateDependencyModuleNames.AddRange(
