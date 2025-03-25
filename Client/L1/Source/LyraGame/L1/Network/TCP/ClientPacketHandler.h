@@ -15,9 +15,11 @@ class LYRAGAME_API ClientPacketHandler
 {
 public:
 	static bool Handle_FResPing(TSharedPtr<class PacketSession>& session, const FResPing& pkt);
+	static bool Handle_FResLogin(TSharedPtr<class PacketSession>& session, const FResLogin& pkt);
 
 public:
 	static TSharedPtr<class SendBuffer> MakeSendBuffer(ReqPing& pkt) { return MakeSendBuffers(pkt); }
+	static TSharedPtr<class SendBuffer> MakeSendBuffer(ReqLogin& pkt) { return MakeSendBuffers(pkt); }
 
 private:
 	template<typename T>

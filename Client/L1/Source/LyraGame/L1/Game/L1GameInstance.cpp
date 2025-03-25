@@ -112,3 +112,32 @@ void UL1GameInstance::SendPingCheck()
 	SEND_PACKET(packet);
 }
 
+void UL1GameInstance::LoginProcess()
+{
+	if (Socket == nullptr || GameServerSession == nullptr)
+	{
+		return;
+	}
+	ReqLogin packet;
+	packet.platformType = 1;
+	packet.token = TCHAR_TO_UTF8(*strUSN);
+	SEND_PACKET(packet);
+}
+
+
+void UL1GameInstance::SetUSN(const FText& USN)
+{
+	strUSN = USN.ToString();
+}
+
+void UL1GameInstance::SetNickname(const FString& Nick)
+{
+	strNick = Nick;
+}
+
+void UL1GameInstance::SetMatchingType(const int32 _matchingType)
+{
+	matchingType = _matchingType;
+}
+
+

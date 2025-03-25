@@ -13,6 +13,7 @@
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnConnectGameServer, bool, isConnect);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLoginResponse, FResLogin, res);
 
 
 #define SEND_PACKET(Pkt)														\
@@ -30,6 +31,7 @@ public:
 public:
 	class FSocket* Socket;
 	FString IpAddress = TEXT("127.0.0.1");
+
 	int16 Port = 10501;
 	TSharedPtr<class PacketSession> GameServerSession;
 
@@ -52,6 +54,26 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SendPingCheck();
 
+public:
+	UFUNCTION(BlueprintCallable)
+	void SetUSN(const FText& USN);
+
+	UFUNCTION(BlueprintCallable)
+	void SetNickname(const FString& Nick);
+
+	UFUNCTION(BlueprintCallable)
+	void SetMatchingType(const int32 _matchingType);
+
+	UFUNCTION(BlueprintCallable)
+	void LoginProcess();
+
+public:
+	FString strUSN;
+	FString strSessionId;
+	FString strNick;
+
+	int32 matchingType;
+
 private:
 	bool isConnect = false;
 	const float PacketProcessInterval = 1.0f / 60.0f;
@@ -62,4 +84,9 @@ private:
 public:
 	UPROPERTY(BlueprintAssignable, Category = "Login")
 	FOnConnectGameServer OnConnectGameServer;
+
+	UPROPERTY(BlueprintAssignable, Category = "Login")
+	FOnLoginResponse OnLoginResponse;
+
+	
 };

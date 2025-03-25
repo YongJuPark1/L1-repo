@@ -18,6 +18,7 @@ public:
 	static void HandlePacket(TSharedPtr<PacketSession> Session, const FString& Cmd, const TArray<uint8>& BodyData)
 	{	
 		REGISTER_PACKET_HANDLER(FResPing);
+		REGISTER_PACKET_HANDLER(FResLogin);
 	}
 };
 

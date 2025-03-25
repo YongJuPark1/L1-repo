@@ -11,3 +11,16 @@ bool ClientPacketHandler::Handle_FResPing(TSharedPtr<class PacketSession>& sessi
 
 	return true;
 }
+
+bool ClientPacketHandler::Handle_FResLogin(TSharedPtr<class PacketSession>& session, const FResLogin& pkt)
+{
+	FString DebugMessage = FString::Printf(TEXT("[FResLogin] Channel: %d, Nick: %s"), pkt.channelId, *pkt.nick);
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, DebugMessage);
+
+	if (auto* GameInstance = Cast<UL1GameInstance>(GWorld->GetGameInstance()))
+	{
+		GameInstance->SetNickname(pkt.nick);
+		GameInstance->OnLoginResponse.Broadcast(pkt);
+	}
+	return true;
+}
