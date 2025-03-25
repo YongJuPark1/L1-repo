@@ -72,3 +72,37 @@ class ReqPing : public TCPRequest
 public:
 	ReqPing() { packetName = "ReqPing"; }
 };
+
+class ReqMatching : public TCPRequest
+{
+public:
+	ReqMatching() { packetName = "ReqMatching"; };
+
+	int32 matchingType;
+
+protected:
+	std::vector<SerializableField> GetSerializableFields() const override
+	{
+		auto Fields = TCPRequest::GetSerializableFields();
+		Fields.push_back(matchingType);
+		return Fields;
+	}
+};
+
+class ReqMatchingCancel : public TCPRequest
+{
+public:
+	ReqMatchingCancel() { packetName = "ReqMatchingCancel"; }
+};
+
+class ReqMatchingUserCount : public TCPRequest
+{
+public:
+	ReqMatchingUserCount() { packetName = "ReqMatchingUserCount"; }
+};
+
+class ReqMatchingDone : public TCPRequest
+{
+public:
+	ReqMatchingDone() { packetName = "ReqMatchingDone"; }
+};

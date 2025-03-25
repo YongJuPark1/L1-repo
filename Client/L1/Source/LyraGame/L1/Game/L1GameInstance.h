@@ -14,6 +14,10 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnConnectGameServer, bool, isConnect);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLoginResponse, FResLogin, res);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMatchingResponse, FResMatching, res);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMatchingCancelResponse, FResMatchingCancel, res);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMatchingDoneResponse, FResMatchingDone, res);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMatchingUserCountResponse, FResMatchingUserCount, res);
 
 
 #define SEND_PACKET(Pkt)														\
@@ -54,15 +58,22 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SendPingCheck();
 
+	UFUNCTION(BlueprintCallable)
+	void SendMatching(int32 _matchingType);
+
+	UFUNCTION(BlueprintCallable)
+	void SendMatchingCancel();
+
+	
+	UFUNCTION(BlueprintCallable)
+	void SendMatchingDone();
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void SetUSN(const FText& USN);
 
 	UFUNCTION(BlueprintCallable)
 	void SetNickname(const FString& Nick);
-
-	UFUNCTION(BlueprintCallable)
-	void SetMatchingType(const int32 _matchingType);
 
 	UFUNCTION(BlueprintCallable)
 	void LoginProcess();
@@ -72,7 +83,6 @@ public:
 	FString strSessionId;
 	FString strNick;
 
-	int32 matchingType;
 
 private:
 	bool isConnect = false;
@@ -87,6 +97,18 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Login")
 	FOnLoginResponse OnLoginResponse;
+
+	UPROPERTY(BlueprintAssignable, Category = "Matching")
+	FOnMatchingResponse OnMatchingResponse;
+
+	UPROPERTY(BlueprintAssignable, Category = "Matching")
+	FOnMatchingCancelResponse OnMatchingCancelResponse;
+
+	UPROPERTY(BlueprintAssignable, Category = "Matching")
+	FOnMatchingDoneResponse OnMatchingDoneResponse;
+
+	UPROPERTY(BlueprintAssignable, Category = "Matching")
+	FOnMatchingUserCountResponse OnMatchingUserCountResponse;
 
 	
 };

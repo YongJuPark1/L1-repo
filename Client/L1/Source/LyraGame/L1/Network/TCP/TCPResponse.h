@@ -90,6 +90,69 @@ public:
 };
 
 
+USTRUCT(BlueprintType)
+struct FResMatching
+{
+	GENERATED_BODY()
+
+public:
+
+	UPROPERTY(BlueprintReadWrite)
+	FResponse result;
+
+	MSGPACK_DEFINE(result.packetName, result.resCode);
+};
+
+USTRUCT(BlueprintType)
+struct FResMatchingCancel
+{
+	GENERATED_BODY()
+
+public:
+
+	UPROPERTY(BlueprintReadWrite)
+	FResponse result;
+
+	MSGPACK_DEFINE(result.packetName, result.resCode);
+};
+
+USTRUCT(BlueprintType)
+struct FResMatchingUserCount
+{
+	GENERATED_BODY()
+
+public:
+
+	UPROPERTY(BlueprintReadWrite)
+	FResponse result;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 userCount;
+
+	MSGPACK_DEFINE(result.packetName, result.resCode, userCount);
+};
+
+USTRUCT(BlueprintType)
+struct FResMatchingDone
+{
+	GENERATED_BODY()
+
+public:
+
+	UPROPERTY(BlueprintReadWrite)
+	FResponse result;
+
+	UPROPERTY(BlueprintReadWrite)
+	FString ip;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 port;
+
+	UPROPERTY(BlueprintReadWrite)
+	FString key;
+
+	MSGPACK_DEFINE(result.packetName, result.resCode, ip, port, key);
+};
 
 class LYRAGAME_API TCPResponse
 {

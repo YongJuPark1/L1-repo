@@ -112,6 +112,37 @@ void UL1GameInstance::SendPingCheck()
 	SEND_PACKET(packet);
 }
 
+void UL1GameInstance::SendMatching(int32 _matchingType)
+{
+	if (Socket == nullptr || GameServerSession == nullptr)
+	{
+		return;
+	}
+
+	ReqMatching packet;
+	packet.matchingType = _matchingType;
+	SEND_PACKET(packet);
+}
+
+void UL1GameInstance::SendMatchingCancel()
+{
+	if (Socket == nullptr || GameServerSession == nullptr)
+	{
+		return;
+	}
+
+	ReqMatchingCancel packet;
+	SEND_PACKET(packet);
+}
+
+void UL1GameInstance::SendMatchingDone()
+{
+	if (Socket == nullptr || GameServerSession == nullptr)
+	{
+		return;
+	}
+}
+
 void UL1GameInstance::LoginProcess()
 {
 	if (Socket == nullptr || GameServerSession == nullptr)
@@ -135,9 +166,6 @@ void UL1GameInstance::SetNickname(const FString& Nick)
 	strNick = Nick;
 }
 
-void UL1GameInstance::SetMatchingType(const int32 _matchingType)
-{
-	matchingType = _matchingType;
-}
+
 
 

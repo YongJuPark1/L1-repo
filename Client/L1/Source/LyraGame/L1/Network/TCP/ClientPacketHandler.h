@@ -16,10 +16,18 @@ class LYRAGAME_API ClientPacketHandler
 public:
 	static bool Handle_FResPing(TSharedPtr<class PacketSession>& session, const FResPing& pkt);
 	static bool Handle_FResLogin(TSharedPtr<class PacketSession>& session, const FResLogin& pkt);
+	static bool Handle_FResMatching(TSharedPtr<class PacketSession>& session, const FResMatching& pkt);
+	static bool Handle_FResMatchingCancel(TSharedPtr<class PacketSession>& session, const FResMatchingCancel& pkt);
+	static bool Handle_FResMatchingUserCount(TSharedPtr<class PacketSession>& session, const FResMatchingUserCount& pkt);
+	static bool Handle_FResMatchingDone(TSharedPtr<class PacketSession>& session, const FResMatchingDone& pkt);
 
 public:
 	static TSharedPtr<class SendBuffer> MakeSendBuffer(ReqPing& pkt) { return MakeSendBuffers(pkt); }
 	static TSharedPtr<class SendBuffer> MakeSendBuffer(ReqLogin& pkt) { return MakeSendBuffers(pkt); }
+	static TSharedPtr<class SendBuffer> MakeSendBuffer(ReqMatching& pkt) { return MakeSendBuffers(pkt); }
+	static TSharedPtr<class SendBuffer> MakeSendBuffer(ReqMatchingCancel& pkt) { return MakeSendBuffers(pkt); }
+	static TSharedPtr<class SendBuffer> MakeSendBuffer(ReqMatchingUserCount& pkt) { return MakeSendBuffers(pkt); }
+	static TSharedPtr<class SendBuffer> MakeSendBuffer(ReqMatchingDone& pkt) { return MakeSendBuffers(pkt); }
 
 private:
 	template<typename T>

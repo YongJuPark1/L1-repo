@@ -24,3 +24,50 @@ bool ClientPacketHandler::Handle_FResLogin(TSharedPtr<class PacketSession>& sess
 	}
 	return true;
 }
+
+bool ClientPacketHandler::Handle_FResMatching(TSharedPtr<class PacketSession>& session, const FResMatching& pkt)
+{
+	FString DebugMessage = FString::Printf(TEXT("[FResMatching] ResCode: %d"), pkt.result.resCode);
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, DebugMessage);
+
+	if (auto* GameInstance = Cast<UL1GameInstance>(GWorld->GetGameInstance()))
+	{
+		GameInstance->OnMatchingResponse.Broadcast(pkt);
+	}
+
+	return true;
+}
+
+bool ClientPacketHandler::Handle_FResMatchingCancel(TSharedPtr<class PacketSession>& session, const FResMatchingCancel& pkt)
+{
+	FString DebugMessage = FString::Printf(TEXT("[FResMatchingCancel] ResCode: %d"), pkt.result.resCode);
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, DebugMessage);
+
+	return true;
+}
+
+bool ClientPacketHandler::Handle_FResMatchingUserCount(TSharedPtr<class PacketSession>& session, const FResMatchingUserCount& pkt)
+{
+	FString DebugMessage = FString::Printf(TEXT("[FResMatchingUserCount] ResCode: %d, userCount : %d"), pkt.result.resCode, pkt.userCount);
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, DebugMessage);
+
+	if (auto* GameInstance = Cast<UL1GameInstance>(GWorld->GetGameInstance()))
+	{
+		GameInstance->OnMatchingUserCountResponse.Broadcast(pkt);
+	}
+
+	return true;
+}
+
+bool ClientPacketHandler::Handle_FResMatchingDone(TSharedPtr<class PacketSession>& session, const FResMatchingDone& pkt)
+{
+	FString DebugMessage = FString::Printf(TEXT("[FResMatchingDone] ResCode: %d, ip : %s, port : %d , process_id : %d"), pkt.result.resCode, *pkt.ip, pkt.port, *pkt.key);
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, DebugMessage);
+
+	if (auto* GameInstance = Cast<UL1GameInstance>(GWorld->GetGameInstance()))
+	{
+		GameInstance->OnMatchingDoneResponse.Broadcast(pkt);
+	}
+
+	return true;
+}
