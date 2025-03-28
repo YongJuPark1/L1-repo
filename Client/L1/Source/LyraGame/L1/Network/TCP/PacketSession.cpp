@@ -71,13 +71,13 @@ void PacketSession::Disconnect()
 	if (RecvWorkerThread)
 	{
 		RecvWorkerThread->Destroy();
-		RecvWorkerThread = nullptr;
+		RecvWorkerThread.Reset();
 	}
 
 	if (SendWorkerThread)
 	{
 		SendWorkerThread->Destroy();
-		SendWorkerThread = nullptr;
+		SendWorkerThread.Reset();
 	}
 }
 
@@ -128,8 +128,7 @@ void PacketSession::Decode(const TArray<uint8>& SerializedData)
 
 	BodyData.Append(DataPtr, BodyLength);
 	DataPtr += BodyLength;
-	UE_LOG(LogTemp, Warning, TEXT("Serialized BodyData: %s"), *FString::FromBlob(BodyData.GetData(), BodyData.Num()));
-
+	
 	PacketRegistry::HandlePacket(AsShared(), cmd, BodyData);
 }
 

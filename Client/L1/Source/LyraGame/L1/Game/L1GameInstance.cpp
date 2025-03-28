@@ -31,6 +31,43 @@ void UL1GameInstance::Init()
 		GetWorld()->GetTimerManager().SetTimer(RecvTimerHandle, this, &UL1GameInstance::HandleRecvPackets, PacketProcessInterval, true);
 	}
 
+	if (GetWorld()->GetNetMode() != NM_DedicatedServer)
+	{
+		return;
+	}
+
+	if (Socket)
+	{
+		DisconnectFromGameServer();
+	}
+
+	Socket = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateSocket(TEXT("Stream"), TEXT("Client Socket"));
+
+	FIPv4Address Ip = NULL;
+	FIPv4Address::Parse(IpAddress, Ip);
+
+	TSharedPtr<FInternetAddr> InternetAddr = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateInternetAddr();
+	InternetAddr->SetIp(Ip.Value);
+	InternetAddr->SetPort(Port);
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("DedicateServer To GameServer Connecting To Server...")));
+	UE_LOG(LogLyraExperience, Log, TEXT("********************DedicateServer To GameServer Connected Server Connecting To Server********************"));
+
+	isConnect = Socket->Connect(*InternetAddr);
+
+	if (isConnect)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("DedicateServer To GameServer Connected Success")));
+		UE_LOG(LogLyraExperience, Log, TEXT("********************DedicateServer To GameServer Connected Server Connect Success********************"));
+		GameServerSession = MakeShared<PacketSession>(Socket);
+		GameServerSession->Run();
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("DedicateServer To GameServer Connected Falied")));
+		UE_LOG(LogLyraExperience, Log, TEXT("********************DedicateServer To GameServer Connected Server Connect Falied********************"));
+	}
+
 }
 
 void UL1GameInstance::Shutdown()
@@ -61,18 +98,21 @@ void UL1GameInstance::ConnectToGameServer()
 	InternetAddr->SetPort(Port);
 	
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Connecting To Server...")));
+	UE_LOG(LogLyraExperience, Log, TEXT("********************Client To GameServer Connected Server Connecting To Server********************"));
 
 	isConnect = Socket->Connect(*InternetAddr);
 
 	if (isConnect)
 	{	
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Connected Success")));
+		UE_LOG(LogLyraExperience, Log, TEXT("********************Client To GameServer Connected Success********************"));
 		GameServerSession = MakeShared<PacketSession>(Socket);
 		GameServerSession->Run();
 	}
 	else
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Connected Falied")));
+		UE_LOG(LogLyraExperience, Log, TEXT("********************Client To GameServer Connected Falied********************"));
 	}
 
 	OnConnectGameServer.Broadcast(isConnect);
@@ -80,6 +120,21 @@ void UL1GameInstance::ConnectToGameServer()
 
 void UL1GameInstance::DisconnectFromGameServer()
 {
+	if (GameServerSession)
+	{
+		GameServerSession->Disconnect();
+		GameServerSession = nullptr;
+	}
+
+	if (Socket)
+	{
+		ISocketSubsystem* SocketSubsystem = ISocketSubsystem::Get();
+		SocketSubsystem->DestroySocket(Socket);
+		Socket = nullptr;
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("DisConnected Success")));
+	}
+
+	isConnect = false;
 }
 
 void UL1GameInstance::HandleRecvPackets()

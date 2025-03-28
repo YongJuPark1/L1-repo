@@ -7,6 +7,7 @@ public class LyraGame : ModuleRules
 	public LyraGame(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+		bEnableExceptions = true;
 
         PublicIncludePaths.AddRange(
                     new string[] {
@@ -15,6 +16,7 @@ public class LyraGame : ModuleRules
                 "LyraGame/L1/ThirdParty/msgpack",
                 "LyraGame/L1/ThirdParty/msgpack/msgpack/adaptor",
                 "LyraGame/L1/Utils",
+                
                     }
                 );
 
@@ -51,6 +53,7 @@ public class LyraGame : ModuleRules
 				"Networking", //TCP
 				"Json", //JSON
                 "JsonUtilities", // JSON
+				
             }
 		);
 

@@ -45,6 +45,12 @@ void RecvWorker::Exit()
 void RecvWorker::Destroy()
 {
 	Running = false;
+	if (Thread)
+	{
+		Thread->Kill(true);
+		delete Thread;
+		Thread = nullptr;
+	}
 }
 
 bool RecvWorker::RecivePacket(TArray<uint8>& OutPacket)
@@ -148,6 +154,12 @@ bool SendWorker::SendPacket(TSharedPtr<class SendBuffer> SendBuffer)
 void SendWorker::Destroy()
 {
 	Running = false;
+	if (Thread)
+	{
+		Thread->Kill(true);
+		delete Thread;
+		Thread = nullptr;
+	}
 }
 
 bool SendWorker::SendDesiredBytes(const uint8* Buffer, int32 Size)
