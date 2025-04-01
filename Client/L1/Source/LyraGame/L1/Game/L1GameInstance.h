@@ -78,11 +78,19 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void LoginProcess();
 
+	void SetPlayerUSN(int64 _playerUSN) { playerUSN = _playerUSN; }
+
+public:
+	UFUNCTION(BlueprintCallable)
+	int64 GetPlayerUSN() { return playerUSN; }
+
 public:
 	FString strUSN;
 	FString strSessionId;
 	FString strNick;
 
+private:
+	int64 playerUSN;
 
 private:
 	bool isConnect = false;

@@ -72,6 +72,9 @@ public:
 	FResponse result;
 
 	UPROPERTY(BlueprintReadWrite)
+	int64 usn;
+
+	UPROPERTY(BlueprintReadWrite)
 	int32 channelId;
 
 	UPROPERTY(BlueprintReadWrite)
@@ -86,7 +89,7 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	TArray<FEquipmentItem> weaponPartsList;
 
-	MSGPACK_DEFINE(result.packetName, result.resCode, channelId, nick, charList, weaponList, weaponPartsList);
+	MSGPACK_DEFINE(result.packetName, result.resCode, usn, channelId, nick, charList, weaponList, weaponPartsList);
 };
 
 

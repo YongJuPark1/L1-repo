@@ -60,6 +60,8 @@ public:
 	/** Starts an async request to load the shared settings, this will call OnSharedSettingsLoaded after loading or creating new ones */
 	void LoadSharedSettingsFromDisk(bool bForceLoad = false);
 
+	virtual FString GetGameLoginOptions() const override;
+
 protected:
 	void OnSharedSettingsLoaded(ULyraSettingsShared* LoadedOrCreatedSettings);
 

@@ -8,6 +8,7 @@
 #include "SocketSubsystem.h"
 #include "Common/TcpSocketBuilder.h"
 #include "LyraLogChannels.h"
+#include "Player/LyraPlayerState.h"
 
 
 
@@ -210,10 +211,11 @@ void UL1GameInstance::LoginProcess()
 	SEND_PACKET(packet);
 }
 
-
 void UL1GameInstance::SetUSN(const FText& USN)
 {
 	strUSN = USN.ToString();
+
+
 }
 
 void UL1GameInstance::SetNickname(const FString& Nick)

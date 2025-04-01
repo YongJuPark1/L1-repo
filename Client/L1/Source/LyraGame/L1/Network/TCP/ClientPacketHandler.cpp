@@ -2,6 +2,11 @@
 
 
 #include "L1/Network/TCP/ClientPacketHandler.h"
+#include "Player/LyraPlayerState.h"
+#include "L1/Game/L1PlayerState.h"
+#include "L1/Game/L1PlayerController.h"
+#include "L1/Game/L1GameInstance.h"
+#include "LyraLogChannels.h"
 
 
 bool ClientPacketHandler::Handle_FResPing(TSharedPtr<class PacketSession>& session, const FResPing& pkt)
@@ -20,6 +25,7 @@ bool ClientPacketHandler::Handle_FResLogin(TSharedPtr<class PacketSession>& sess
 	if (auto* GameInstance = Cast<UL1GameInstance>(GWorld->GetGameInstance()))
 	{
 		GameInstance->SetNickname(pkt.nick);
+		GameInstance->SetPlayerUSN(pkt.usn);
 		GameInstance->OnLoginResponse.Broadcast(pkt);
 	}
 	return true;

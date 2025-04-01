@@ -16,6 +16,7 @@
 #include "GameFramework/GameplayMessageSubsystem.h"
 #include "GameFramework/PlayerState.h"
 #include "Engine/World.h"
+#include "L1/Game/L1PlayerState.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(LyraHealthComponent)
 
@@ -150,6 +151,12 @@ void ULyraHealthComponent::HandleOutOfHealth(AActor* DamageInstigator, AActor* D
 #if WITH_SERVER_CODE
 	if (AbilitySystemComponent && DamageEffectSpec)
 	{
+		// 이미 죽은 상태면 처리하지 않음
+		if (DeathState != ELyraDeathState::NotDead)
+		{
+			return;
+		}
+
 		// Send the "GameplayEvent.Death" gameplay event through the owner's ability system.  This can be used to trigger a death gameplay ability.
 		{
 			FGameplayEventData Payload;
@@ -179,9 +186,26 @@ void ULyraHealthComponent::HandleOutOfHealth(AActor* DamageInstigator, AActor* D
 
 			UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
 			MessageSystem.BroadcastMessage(Message.Verb, Message);
-		}
 
-		//@TODO: assist messages (could compute from damage dealt elsewhere)?
+			
+
+			AL1PlayerState* VictimState = Cast<AL1PlayerState>(ULyraVerbMessageHelpers::GetPlayerStateFromObject(AbilitySystemComponent->GetAvatarActor()));
+
+			if (VictimState)
+			{
+				VictimState->AddDeath();
+			}		
+
+			// 죽인 사람의 PlayerState
+			if (DamageInstigator)
+			{
+				AL1PlayerState* KillerState = Cast<AL1PlayerState>(ULyraVerbMessageHelpers::GetPlayerStateFromObject(DamageInstigator));
+				if (KillerState)
+				{
+					KillerState->AddKill();
+				}
+			}
+		}
 	}
 
 #endif // #if WITH_SERVER_CODE

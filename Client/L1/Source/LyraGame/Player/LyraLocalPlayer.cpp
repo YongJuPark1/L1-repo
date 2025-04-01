@@ -8,6 +8,7 @@
 #include "Settings/LyraSettingsLocal.h"
 #include "Settings/LyraSettingsShared.h"
 #include "CommonUserSubsystem.h"
+#include "L1/Game/L1GameInstance.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(LyraLocalPlayer)
 
@@ -106,7 +107,7 @@ ULyraSettingsShared* ULyraLocalPlayer::GetSharedSettings() const
 		// On PC it's okay to use the sync load because it only checks the disk
 		// This could use a platform tag to check for proper save support instead
 		bool bCanLoadBeforeLogin = PLATFORM_DESKTOP;
-		
+
 		if (bCanLoadBeforeLogin)
 		{
 			SharedSettings = ULyraSettingsShared::LoadOrCreateSettings(this);
@@ -131,6 +132,20 @@ void ULyraLocalPlayer::LoadSharedSettingsFromDisk(bool bForceLoad)
 	}
 
 	ensure(ULyraSettingsShared::AsyncLoadOrCreateSettings(this, ULyraSettingsShared::FOnSettingsLoadedEvent::CreateUObject(this, &ULyraLocalPlayer::OnSharedSettingsLoaded)));
+}
+
+FString ULyraLocalPlayer::GetGameLoginOptions() const
+{
+	FString result = TEXT("");
+
+	if (auto* GameInstance = Cast<UL1GameInstance>(GWorld->GetGameInstance()))
+	{
+		FString AddOptionString = TEXT("usn=");
+		int64 usn = GameInstance->GetPlayerUSN();
+		result.Append(AddOptionString + LexToString(usn) + TEXT("?"));
+	}
+
+	return result;
 }
 
 void ULyraLocalPlayer::OnSharedSettingsLoaded(ULyraSettingsShared* LoadedOrCreatedSettings)
