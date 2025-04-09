@@ -50,6 +50,7 @@ protected:
 	virtual void ServerCreateBots();
 
 	virtual void SpawnOneBot();
+public:
 	virtual void RemoveOneBot();
 
 	FString CreateBotName(int32 PlayerIndex);

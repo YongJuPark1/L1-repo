@@ -79,6 +79,7 @@ protected:
 
 	bool TryDedicatedServerLogin();
 	void HostDedicatedServerMatch(ECommonSessionOnlineMode OnlineMode);
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	UFUNCTION()
 	void OnUserInitializedForDedicatedServer(const UCommonUserInfo* UserInfo, bool bSuccess, FText Error, ECommonUserPrivilege RequestedPrivilege, ECommonUserOnlineContext OnlineContext);

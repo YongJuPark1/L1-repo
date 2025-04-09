@@ -15,13 +15,21 @@ namespace msgpack {
 			struct convert<TArray<T>> {
 				msgpack::object const& operator()(msgpack::object const& o, TArray<T>& v) const {
 					if (o.type != msgpack::type::ARRAY) {
+						UE_LOG(LogTemp, Error, TEXT("TArray<T> convert failed: expected array but got type %d"), (int)o.type);
 						throw msgpack::type_error();
 					}
 
 					v.Empty();
 					for (size_t i = 0; i < o.via.array.size; ++i) {
 						T item;
-						o.via.array.ptr[i].convert(item);
+						try {
+							o.via.array.ptr[i].convert(item);
+						}
+						catch (const msgpack::type_error& e) {
+							UE_LOG(LogTemp, Error, TEXT("Type error: %s"), *FString(e.what()));
+							UE_LOG(LogTemp, Error, TEXT("TArray<T>: failed to convert element at index %d: type = %d"), (int)i, (int)o.via.array.ptr[i].type);
+							throw;
+						}
 						v.Add(item);
 					}
 					return o;
@@ -107,6 +115,40 @@ namespace msgpack {
 					o.via.str.ptr = utf8String.c_str();
 				}
 			};
+
+			template<>
+			struct convert<int64> {
+				msgpack::object const& operator()(msgpack::object const& o, int64& v) const {
+					if (o.type == msgpack::type::POSITIVE_INTEGER) {
+						v = static_cast<int64>(o.via.u64);
+					}
+					else if (o.type == msgpack::type::NEGATIVE_INTEGER) {
+						v = static_cast<int64>(o.via.i64);
+					}
+					else {
+						throw msgpack::type_error();
+					}
+					return o;
+				}
+			};
+
+			template<>
+			struct pack<int64> {
+				template <typename Stream>
+				packer<Stream>& operator()(msgpack::packer<Stream>& o, const int64& v) const {
+					o.pack_int64(v);
+					return o;
+				}
+			};
+
+			template<>
+			struct object_with_zone<int64> {
+				void operator()(msgpack::object::with_zone& o, const int64& v) const {
+					o.type = msgpack::type::NEGATIVE_INTEGER;
+					o.via.i64 = v;
+				}
+			};
+
 
 		}
 	}

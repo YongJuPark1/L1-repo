@@ -6,7 +6,7 @@
 #include "msgpack/msgpack.hpp"
 
 #define REGISTER_PACKET_HANDLER(PacketType) \
-    if (Cmd == TEXT("Req") + FString(#PacketType).RightChop(4)) \
+    if (Cmd == TEXT("Req") + FString(#PacketType).RightChop(4) || Cmd == TEXT("Res") + FString(#PacketType).RightChop(4)) \
     { \
         using Type = PacketType; \
         ClientPacketHandler::Handle_##PacketType(Session, PacketSession::Unpack<Type>(BodyData)); \
@@ -22,6 +22,8 @@ public:
 		REGISTER_PACKET_HANDLER(FResMatching);
 		REGISTER_PACKET_HANDLER(FResMatchingUserCount);
 		REGISTER_PACKET_HANDLER(FResMatchingDone);
+		REGISTER_PACKET_HANDLER(FResIngameUserResult);
+
 	}
 };
 
@@ -108,6 +110,10 @@ void PacketSession::Decode(const TArray<uint8>& SerializedData)
 	}
 
 	FString cmd = FString(UTF8_TO_TCHAR(reinterpret_cast<const char*>(DataPtr)));
+	UE_LOG(LogTemp, Error, TEXT("PACKET CMD : %s"), *cmd);
+	FString DebugMessage = FString::Printf(TEXT("PACKET CMD : %s"), *cmd);
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, DebugMessage);
+
 	DataPtr += CmdLength;
 
 	int16 NonceLength = 0;

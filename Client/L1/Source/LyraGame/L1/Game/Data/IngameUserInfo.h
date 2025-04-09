@@ -40,7 +40,10 @@ public:
 
     // User ID
     UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "InGameUserInfo")
-    int32 Usn;
+    int64 Usn;
+
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "InGameUserInfo")
+    int32 MatchingType;
 
     // Team ID
     UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "InGameUserInfo")
@@ -49,6 +52,9 @@ public:
     // Rating score
     UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "InGameUserInfo")
     int32 RatingScore;
+
+    UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "InGameUserInfo")
+    int32 IsAI;
 
     UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "InGameUserInfo")
     FIngamePlayInfo ingamePlayInfo;

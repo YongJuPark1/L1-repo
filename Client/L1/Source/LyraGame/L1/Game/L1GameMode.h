@@ -14,7 +14,6 @@ class LYRAGAME_API AL1GameMode : public ALyraGameMode
     GENERATED_BODY()
 
     AL1GameMode(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-    
 
 protected:
     virtual void BeginPlay() override;
@@ -22,11 +21,12 @@ protected:
     virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;    
     virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
     virtual FString InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl& UniqueId, const FString& Options, const FString& Portal) override;
-    virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
     
 public:
     void CheckClientConnections();
 
+    UFUNCTION(BlueprintCallable)
+    void EndMatch();
 private:
     int64 GetPlayerUsnInOptions(const FString& Options);
 
@@ -36,9 +36,17 @@ private:
     FString strUserList;
     double LastActiveTime;
     FTimerHandle TimeoutCheckTimer;
+    int32 NumBots;
+    int32 Port;
+    int32 MatchingType;
+    FString IP;
+    int32 Pid;
+    int32 Idx;
 
+    int32 GetCurrentBotCount();
 public:
     // Array of user info
     UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "InGameUserInfo")
     TMap<int64, FInGameUserInfo> ingameUserInfoMap;
+
 };

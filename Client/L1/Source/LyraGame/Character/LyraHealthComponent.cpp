@@ -151,18 +151,13 @@ void ULyraHealthComponent::HandleOutOfHealth(AActor* DamageInstigator, AActor* D
 #if WITH_SERVER_CODE
 	if (AbilitySystemComponent && DamageEffectSpec)
 	{
-		// 이미 죽은 상태면 처리하지 않음
-		if (DeathState != ELyraDeathState::NotDead)
-		{
-			return;
-		}
-
 		// Send the "GameplayEvent.Death" gameplay event through the owner's ability system.  This can be used to trigger a death gameplay ability.
 		{
 			FGameplayEventData Payload;
 			Payload.EventTag = LyraGameplayTags::GameplayEvent_Death;
 			Payload.Instigator = DamageInstigator;
-			Payload.Target = AbilitySystemComponent->GetAvatarActor();
+			AActor* TargetActor = AbilitySystemComponent ? AbilitySystemComponent->GetAvatarActor() : nullptr;
+			Payload.Target = IsValid(TargetActor) ? TargetActor : nullptr;
 			Payload.OptionalObject = DamageEffectSpec->Def;
 			Payload.ContextHandle = DamageEffectSpec->GetEffectContext();
 			Payload.InstigatorTags = *DamageEffectSpec->CapturedSourceTags.GetAggregatedTags();
@@ -185,9 +180,7 @@ void ULyraHealthComponent::HandleOutOfHealth(AActor* DamageInstigator, AActor* D
 			//@TODO: Determine if it's an opposing team kill, self-own, team kill, etc...
 
 			UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
-			MessageSystem.BroadcastMessage(Message.Verb, Message);
-
-			
+			MessageSystem.BroadcastMessage(Message.Verb, Message);			
 
 			AL1PlayerState* VictimState = Cast<AL1PlayerState>(ULyraVerbMessageHelpers::GetPlayerStateFromObject(AbilitySystemComponent->GetAvatarActor()));
 
@@ -197,7 +190,7 @@ void ULyraHealthComponent::HandleOutOfHealth(AActor* DamageInstigator, AActor* D
 			}		
 
 			// 죽인 사람의 PlayerState
-			if (DamageInstigator)
+			if (DamageInstigator && IsValid(DamageInstigator))
 			{
 				AL1PlayerState* KillerState = Cast<AL1PlayerState>(ULyraVerbMessageHelpers::GetPlayerStateFromObject(DamageInstigator));
 				if (KillerState)

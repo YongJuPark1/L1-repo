@@ -34,7 +34,7 @@ public:
 
 public:
 	class FSocket* Socket;
-	FString IpAddress = TEXT("127.0.0.1");
+	FString IpAddress = TEXT("192.168.100.11");
 
 	int16 Port = 10501;
 	TSharedPtr<class PacketSession> GameServerSession;
@@ -67,6 +67,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void SendMatchingDone();
+
+	UFUNCTION()
+	void SendMatchingResult(FString ip, int32 port, int32 pid, int32 matchingType, FString ingameResult);
 
 public:
 	UFUNCTION(BlueprintCallable)

@@ -7,6 +7,7 @@
 #include "GameFramework/GameStateBase.h"
 #include "LyraGamePhaseAbility.h"
 #include "LyraGamePhaseLog.h"
+#include "L1/Game/L1GameMode.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(LyraGamePhaseSubsystem)
 
@@ -194,6 +195,22 @@ void ULyraGamePhaseSubsystem::OnEndPhase(const ULyraGamePhaseAbility* PhaseAbili
 {
 	const FGameplayTag EndedPhaseTag = PhaseAbility->GetGamePhaseTag();
 	UE_LOG(LogLyraGamePhase, Log, TEXT("Ended Phase '%s' (%s)"), *EndedPhaseTag.ToString(), *GetNameSafe(PhaseAbility));
+
+	if (EndedPhaseTag == FGameplayTag::RequestGameplayTag(TEXT("ShooterGame.GamePhase.Playing")))
+	{
+		UE_LOG(LogLyraGamePhase, Log, TEXT("=====================CALL EndMatch======================="));
+		AL1GameMode* GameMode = Cast<AL1GameMode>(GetWorld()->GetAuthGameMode());
+		if (GameMode)
+		{
+			GameMode->EndMatch();
+		}
+		else
+		{
+			UE_LOG(LogLyraGamePhase, Log, TEXT("GameMode Empty"));
+		}
+		UE_LOG(LogLyraGamePhase, Log, TEXT("============================================"));
+	}
+	
 
 	const FLyraGamePhaseEntry& Entry = ActivePhaseMap.FindChecked(PhaseAbilityHandle);
 	Entry.PhaseEndedCallback.ExecuteIfBound(PhaseAbility);

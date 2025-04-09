@@ -27,13 +27,14 @@ class LYRAGAME_API ALyraGameState : public AModularGameStateBase, public IAbilit
 	GENERATED_BODY()
 
 public:
-
+	
 	ALyraGameState(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	//~AActor interface
 	virtual void PreInitializeComponents() override;
 	virtual void PostInitializeComponents() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	
 	virtual void Tick(float DeltaSeconds) override;
 	//~End of AActor interface
 
@@ -95,4 +96,5 @@ protected:
 	UFUNCTION()
 	void OnRep_RecorderPlayerState();
 
+	
 };

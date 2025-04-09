@@ -4,7 +4,6 @@
 #include "L1/Network/TCP/ClientPacketHandler.h"
 #include "Player/LyraPlayerState.h"
 #include "L1/Game/L1PlayerState.h"
-#include "L1/Game/L1PlayerController.h"
 #include "L1/Game/L1GameInstance.h"
 #include "LyraLogChannels.h"
 
@@ -73,6 +72,19 @@ bool ClientPacketHandler::Handle_FResMatchingDone(TSharedPtr<class PacketSession
 	if (auto* GameInstance = Cast<UL1GameInstance>(GWorld->GetGameInstance()))
 	{
 		GameInstance->OnMatchingDoneResponse.Broadcast(pkt);
+	}
+
+	return true;
+}
+
+bool ClientPacketHandler::Handle_FResIngameUserResult(TSharedPtr<class PacketSession>& session, const FResIngameUserResult& pkt)
+{
+	FString DebugMessage = FString::Printf(TEXT("[FResIngameUserResult] ResCode: %d"), pkt.result.resCode);
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, DebugMessage);
+
+	if (auto* GameInstance = Cast<UL1GameInstance>(GWorld->GetGameInstance()))
+	{
+		//GameInstance->OnMatchingDoneResponse.Broadcast(pkt);
 	}
 
 	return true;

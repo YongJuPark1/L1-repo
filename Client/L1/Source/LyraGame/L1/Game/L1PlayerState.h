@@ -16,10 +16,11 @@ protected:
     // 필요한 추가 함수나 변수들 선언
     virtual void BeginPlay() override;
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+   
 
 public:
     void SetIngameUserInfo(FInGameUserInfo* _ingameUserInfo) { ingameUserInfo = _ingameUserInfo; }
-    FInGameUserInfo* GetInagmeUserInfo(){ return ingameUserInfo; }
+    FInGameUserInfo* GetIngameUserInfo(){ return ingameUserInfo; }
 
     void AddKill();
     void AddDeath();

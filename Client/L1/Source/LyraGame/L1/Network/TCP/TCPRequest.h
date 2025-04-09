@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "variant"
+#include "vector"
 #include "L1/Network/TCP/NetworkWorker.h"
 #include "msgpack/msgpack.hpp"
 #include "msgpack/adaptor/MsgpackCustomAdaptor.h"
@@ -65,6 +66,7 @@ protected:
 		Fields.push_back(token);
 		return Fields;
 	}
+
 };
 
 class ReqPing : public TCPRequest
@@ -105,4 +107,28 @@ class ReqMatchingDone : public TCPRequest
 {
 public:
 	ReqMatchingDone() { packetName = "ReqMatchingDone"; }
+};
+
+class ReqSaveIngameResult : public TCPRequest
+{
+public:
+	ReqSaveIngameResult() { packetName = "ReqSaveIngameResult"; }
+
+	std::string ip;
+	int32 port;
+	int32 idx;
+	int32 matchingType;
+	std::string ingameResult;
+
+protected:
+	std::vector<SerializableField> GetSerializableFields() const override
+	{
+		auto Fields = TCPRequest::GetSerializableFields();
+		Fields.push_back(ip);
+		Fields.push_back(port);
+		Fields.push_back(idx);
+		Fields.push_back(matchingType);
+		Fields.push_back(ingameResult);
+		return Fields;
+	}
 };

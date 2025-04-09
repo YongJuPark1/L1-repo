@@ -45,7 +45,7 @@ struct FEquipmentItem
 public:
 
 	UPROPERTY(BlueprintReadWrite)
-	int32 idx;
+	int64 idx;
 
 	UPROPERTY(BlueprintReadWrite)
 	int32 itemType;
@@ -60,6 +60,23 @@ public:
 
 };
 
+USTRUCT(BlueprintType)
+struct FMonetary
+{
+	GENERATED_BODY()
+public:
+
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 montary;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 amount;
+
+	MSGPACK_DEFINE(montary, amount);
+
+};
+
 
 USTRUCT(BlueprintType)
 struct FResLogin
@@ -71,6 +88,7 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	FResponse result;
 
+
 	UPROPERTY(BlueprintReadWrite)
 	int64 usn;
 
@@ -79,17 +97,20 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	FString nick;
-
+	
 	UPROPERTY(BlueprintReadWrite)
 	TArray<FEquipmentItem> charList;
-
+	
 	UPROPERTY(BlueprintReadWrite)
 	TArray<FEquipmentItem> weaponList;
 
 	UPROPERTY(BlueprintReadWrite)
 	TArray<FEquipmentItem> weaponPartsList;
 
-	MSGPACK_DEFINE(result.packetName, result.resCode, usn, channelId, nick, charList, weaponList, weaponPartsList);
+	UPROPERTY(BlueprintReadWrite)
+	TArray<FMonetary> monetaryList;
+
+	MSGPACK_DEFINE(result.packetName, result.resCode, usn, channelId, nick, monetaryList, charList, weaponList, weaponPartsList);
 };
 
 
@@ -156,6 +177,69 @@ public:
 
 	MSGPACK_DEFINE(result.packetName, result.resCode, ip, port, key);
 };
+
+USTRUCT(BlueprintType)
+struct FResIngameUserInfo
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadWrite)
+	int64 usn;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 matchingType;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 isAI;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 teamId;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 kill;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 death;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 assist;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 win;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 lose;
+
+	
+
+	MSGPACK_DEFINE(usn, matchingType, isAI, teamId, kill, death, assist, win, lose);
+};
+
+
+USTRUCT(BlueprintType)
+struct FResIngameUserResult
+{
+	GENERATED_BODY()
+
+public:
+
+	UPROPERTY(BlueprintReadWrite)
+	FResponse result;
+
+	UPROPERTY(BlueprintReadWrite)
+	FResIngameUserInfo ingameUserInfo;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 addRatingScore;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 addGold;
+
+	MSGPACK_DEFINE(result.packetName, result.resCode, ingameUserInfo.usn, ingameUserInfo.matchingType, ingameUserInfo.isAI, ingameUserInfo.teamId, ingameUserInfo.kill, ingameUserInfo.death, ingameUserInfo.assist, ingameUserInfo.win, ingameUserInfo.lose, addRatingScore, addGold);
+};
+
+
 
 class LYRAGAME_API TCPResponse
 {

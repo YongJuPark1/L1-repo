@@ -199,6 +199,22 @@ void UL1GameInstance::SendMatchingDone()
 	}
 }
 
+void UL1GameInstance::SendMatchingResult(FString ip, int32 port, int32 idx, int32 matchingType, FString ingameResult)
+{	
+	if (Socket == nullptr || GameServerSession == nullptr)
+	{
+		return;
+	}
+	ReqSaveIngameResult packet;
+	packet.ip = TCHAR_TO_UTF8(*ip);
+	packet.port = port;
+	packet.idx = idx;
+	packet.matchingType = matchingType;
+	packet.ingameResult = TCHAR_TO_UTF8(*ingameResult);
+	SEND_PACKET(packet);
+	
+}
+
 void UL1GameInstance::LoginProcess()
 {
 	if (Socket == nullptr || GameServerSession == nullptr)

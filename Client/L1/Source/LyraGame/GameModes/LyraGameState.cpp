@@ -143,3 +143,5 @@ void ALyraGameState::OnRep_RecorderPlayerState()
 {
 	OnRecorderPlayerStateChangedEvent.Broadcast(RecorderPlayerState);
 }
+
+
