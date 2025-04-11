@@ -73,6 +73,7 @@ void UL1GameInstance::Init()
 
 void UL1GameInstance::Shutdown()
 {
+	UE_LOG(LogLyraExperience, Log, TEXT("********************DedicateServer Shutdown********************"));
 	Super::Shutdown();
 }
 
@@ -213,6 +214,14 @@ void UL1GameInstance::SendMatchingResult(FString ip, int32 port, int32 idx, int3
 	packet.ingameResult = TCHAR_TO_UTF8(*ingameResult);
 	SEND_PACKET(packet);
 	
+}
+
+void UL1GameInstance::SendShutdownDedicateServer(int32 dediIdx)
+{
+	UE_LOG(LogTemp, Log, TEXT("Shutdown TimerStart - 5"));
+	ReqDedicateShutdown packet;
+	packet.dediIdx = dediIdx;
+	SEND_PACKET(packet);
 }
 
 void UL1GameInstance::LoginProcess()

@@ -17,47 +17,42 @@ void AL1PlayerState::BeginPlay()
 
 void AL1PlayerState::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-    if (ingameUserInfo != nullptr)
-    {
-        delete ingameUserInfo;
-        ingameUserInfo = nullptr;
-        
-    }
+    ingameUserResult.Reset();
+    
     Super::EndPlay(EndPlayReason);
 }
 
 void AL1PlayerState::AddKill()
 {
     // 킬 수 증가
-    if (ingameUserInfo == nullptr)
+    if (!ingameUserResult.IsValid())
         return;
 
-    UE_LOG(LogLyraExperience, Log, TEXT("Player %s before a kill! Kill: %d"), *ingameUserInfo->Nick, ingameUserInfo->ingamePlayInfo.killCnt);
+    UE_LOG(LogLyraExperience, Log, TEXT("Player %s before a kill! Kill: %d"), *ingameUserResult->Nick, ingameUserResult->ingamePlayInfo.killCnt);
 
-    ingameUserInfo->ingamePlayInfo.killCnt++;
+    ingameUserResult->ingamePlayInfo.killCnt++;
 
-    // 로그 출력
-    UE_LOG(LogLyraExperience, Log, TEXT("Player %s got a kill! Kill: %d"), *ingameUserInfo->Nick, ingameUserInfo->ingamePlayInfo.killCnt);
+    UE_LOG(LogLyraExperience, Log, TEXT("Player %s got a kill! Kill: %d"), *ingameUserResult->Nick, ingameUserResult->ingamePlayInfo.killCnt);
 }
 
 void AL1PlayerState::AddDeath()
 {
-    if (ingameUserInfo == nullptr)
+    if (!ingameUserResult.IsValid())
         return;
 
-    ingameUserInfo->ingamePlayInfo.deathCnt++;
+    ingameUserResult->ingamePlayInfo.deathCnt++;
 
-    // 로그 출력
-    UE_LOG(LogLyraExperience, Log, TEXT("Player %s got a death! Death %d"), *ingameUserInfo->Nick, ingameUserInfo->ingamePlayInfo.deathCnt);
+    UE_LOG(LogLyraExperience, Log, TEXT("Player %s got a death! Death %d"), *ingameUserResult->Nick, ingameUserResult->ingamePlayInfo.deathCnt);
 }
 
 void AL1PlayerState::AddAssist()
 {
-    // 킬 수 증가
-    ingameUserInfo->ingamePlayInfo.assistCnt++;
+    if (!ingameUserResult.IsValid())
+        return;
 
-    // 로그 출력
-    UE_LOG(LogLyraExperience, Log, TEXT("Player %s got a assist! Assist %d"), *ingameUserInfo->Nick, ingameUserInfo->ingamePlayInfo.assistCnt);
+    ingameUserResult->ingamePlayInfo.assistCnt++;
+
+    UE_LOG(LogLyraExperience, Log, TEXT("Player %s got a assist! Assist %d"), *ingameUserResult->Nick, ingameUserResult->ingamePlayInfo.assistCnt);
 }
 
 

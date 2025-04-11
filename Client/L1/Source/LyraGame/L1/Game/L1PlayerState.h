@@ -19,14 +19,14 @@ protected:
    
 
 public:
-    void SetIngameUserInfo(FInGameUserInfo* _ingameUserInfo) { ingameUserInfo = _ingameUserInfo; }
-    FInGameUserInfo* GetIngameUserInfo(){ return ingameUserInfo; }
+    void SetIngameUserInfo(TSharedPtr<FInGameUserInfo> _ingameUserInfo) { ingameUserResult = _ingameUserInfo; }
+    TSharedPtr<FInGameUserInfo> GetIngameUserInfo(){ return ingameUserResult; }
 
     void AddKill();
     void AddDeath();
     void AddAssist();
     
 private:
-    FInGameUserInfo* ingameUserInfo;
+    TSharedPtr<FInGameUserInfo> ingameUserResult;
 
 };

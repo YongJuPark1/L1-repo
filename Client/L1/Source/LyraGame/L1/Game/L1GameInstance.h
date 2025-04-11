@@ -41,6 +41,8 @@ public:
 
 protected:
 	virtual void Init() override;
+
+public:
 	virtual void Shutdown() override;
 
 public:
@@ -63,13 +65,15 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SendMatchingCancel();
-
 	
 	UFUNCTION(BlueprintCallable)
 	void SendMatchingDone();
 
 	UFUNCTION()
 	void SendMatchingResult(FString ip, int32 port, int32 pid, int32 matchingType, FString ingameResult);
+
+	UFUNCTION()
+	void SendShutdownDedicateServer(int32 dediIdx);
 
 public:
 	UFUNCTION(BlueprintCallable)

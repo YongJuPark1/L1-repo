@@ -18,6 +18,11 @@ AL1GameMode::AL1GameMode(const FObjectInitializer& ObjectInitializer)
 	PlayerStateClass = AL1PlayerState::StaticClass();
 }
 
+AL1GameMode::~AL1GameMode()
+{	
+	
+}
+
 void AL1GameMode::BeginPlay()
 {
     Super::BeginPlay();	
@@ -28,8 +33,12 @@ void AL1GameMode::InitGame(const FString& MapName, const FString& Options, FStri
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
 
-	if (ingameUserInfoMap.Num() > 0)
-		ingameUserInfoMap.Empty();
+	if (ingameUserInfoMap)
+	{
+		ingameUserInfoMap.Reset();
+	}
+
+	ingameUserInfoMap = MakeShared<TMap<int64, FInGameUserInfo>>();
 	
 	if (FParse::Value(FCommandLine::Get(), TEXT("IP="), IP))
 	{
@@ -134,11 +143,11 @@ void AL1GameMode::InitGame(const FString& MapName, const FString& Options, FStri
 				UserInfo.IsAI = UserInfoObject->GetIntegerField(TEXT("isAI"));
 
 				// 배열에 추가
-				ingameUserInfoMap.Add(UserInfo.Usn, UserInfo);
+				ingameUserInfoMap->Add(UserInfo.Usn, UserInfo);
 			}
 
 			// 사용자 목록을 로그로 출력
-			for (const auto& pair : ingameUserInfoMap)
+			for (const auto& pair : *ingameUserInfoMap)
 			{
 				const FInGameUserInfo& userInfo = pair.Value;
 				UE_LOG(LogLyraExperience, Log, TEXT("User: %s, Usn: %d, TeamId: %d, RatingScore: %d"), *userInfo.Nick, userInfo.Usn, userInfo.TeamId, userInfo.RatingScore);
@@ -196,7 +205,7 @@ void AL1GameMode::EndMatch()
 		
 		TArray<TSharedPtr<FJsonValue>> UserArray;
 
-		for (const auto& pair : ingameUserInfoMap)
+		for (const auto& pair : *ingameUserInfoMap)
 		{
 			// 개별 사용자 정보를 저장할 JSON 객체
 			TSharedPtr<FJsonObject> UserJsonObject = MakeShared<FJsonObject>();
@@ -253,6 +262,46 @@ void AL1GameMode::EndMatch()
 	}
 }
 
+void AL1GameMode::ShutdownStart()
+{
+	UE_LOG(LogTemp, Log, TEXT("Shutdown TimerStart"));
+
+	if (false == GetWorld()->GetTimerManager().IsTimerActive(ShdownTimerHandle))
+	{
+		UE_LOG(LogTemp, Log, TEXT("Shutdown TimerStart - 2"));
+		UL1GameInstance* L1GameInstance = Cast<UL1GameInstance>(GetGameInstance());
+
+		if (L1GameInstance)
+		{
+			UE_LOG(LogTemp, Log, TEXT("Shutdown TimerStart - 3"));
+			ShutdownDelegate.BindUObject(L1GameInstance, &UL1GameInstance::SendShutdownDedicateServer, Idx);
+			UE_LOG(LogTemp, Log, TEXT("Shutdown TimerStart - 4"));
+			GetWorld()->GetTimerManager().SetTimer(ShdownTimerHandle, ShutdownDelegate, 10.0f, false, 10.0f);
+		}		
+	}
+}
+
+
+void AL1GameMode::ShutdownEnd()
+{
+	UE_LOG(LogTemp, Log, TEXT("Shutdown End"));
+
+	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+	{
+		APlayerController* PC = It->Get();
+		if (PC)
+		{
+			//PC->ClientTravel(TEXT("/Game/Maps/MainMenu"), TRAVEL_Absolute); // 클라이언트를 메인 메뉴로 이동
+		}
+	}
+
+	UE_LOG(LogLyraExperience, Log, TEXT("********************DedicateServer Shutdown********************"));
+	FGenericPlatformMisc::RequestExit(false);
+}
+
+
+
+
 int64 AL1GameMode::GetPlayerUsnInOptions(const FString& Options)
 {
 	int64 result = 0;
@@ -293,7 +342,7 @@ void AL1GameMode::PreLogin(const FString& Options, const FString& Address, const
 	int64 playerUSN = GetPlayerUsnInOptions(Options);
 
 	UE_LOG(LogTemp, Log, TEXT("=== IngameUserInfoMap ==="));
-	for (const auto& pair : ingameUserInfoMap)
+	for (const auto& pair : *ingameUserInfoMap)
 	{
 		UE_LOG(LogTemp, Log, TEXT("USN Key: %lld, UserInfo.USN: %lld"), pair.Key, pair.Value.Usn);
 	}
@@ -301,7 +350,7 @@ void AL1GameMode::PreLogin(const FString& Options, const FString& Address, const
 
 	UE_LOG(LogTemp, Log, TEXT("Checking USN: %lld"), playerUSN);
 
-	if (!ingameUserInfoMap.Contains(playerUSN))
+	if (!ingameUserInfoMap->Find(playerUSN))
 	{
 		ErrorMessage = TEXT("접속이 차단되었습니다: 올바른 USN이 필요합니다.");
 		UE_LOG(LogTemp, Error, TEXT("PreLogin: Client rejected due to invalid USN (USN=%lld)"), playerUSN);
@@ -317,9 +366,10 @@ FString AL1GameMode::InitNewPlayer(APlayerController* NewPlayerController, const
 
 	AL1PlayerState* PlayerState = NewPlayerController->GetPlayerState<AL1PlayerState>();
 
-	if (FInGameUserInfo* userInfo = ingameUserInfoMap.Find(playerUSN))
+	if (FInGameUserInfo* userInfo = ingameUserInfoMap->Find(playerUSN))
 	{	
-		PlayerState->SetIngameUserInfo(userInfo);
+		TSharedPtr<FInGameUserInfo> userInfoPtr = MakeShared<FInGameUserInfo>(*userInfo);
+		PlayerState->SetIngameUserInfo(userInfoPtr);
 	}
 
 #if WITH_SERVER_CODE 
@@ -344,4 +394,14 @@ FString AL1GameMode::InitNewPlayer(APlayerController* NewPlayerController, const
 	
 
 	return FString();
+}
+
+void AL1GameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	ShdownTimerHandle.Invalidate();
+
+	if (!ingameUserInfoMap->IsEmpty())
+	{
+		ingameUserInfoMap->Empty();
+	}
 }

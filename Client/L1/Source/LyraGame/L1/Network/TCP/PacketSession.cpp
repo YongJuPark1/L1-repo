@@ -23,7 +23,8 @@ public:
 		REGISTER_PACKET_HANDLER(FResMatchingUserCount);
 		REGISTER_PACKET_HANDLER(FResMatchingDone);
 		REGISTER_PACKET_HANDLER(FResIngameUserResult);
-
+		REGISTER_PACKET_HANDLER(FResSaveIngameResult);
+		REGISTER_PACKET_HANDLER(FResDedicateShutdown);
 	}
 };
 
@@ -110,9 +111,12 @@ void PacketSession::Decode(const TArray<uint8>& SerializedData)
 	}
 
 	FString cmd = FString(UTF8_TO_TCHAR(reinterpret_cast<const char*>(DataPtr)));
-	UE_LOG(LogTemp, Error, TEXT("PACKET CMD : %s"), *cmd);
-	FString DebugMessage = FString::Printf(TEXT("PACKET CMD : %s"), *cmd);
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, DebugMessage);
+	if (cmd != "ReqPing")
+	{	
+		FString DebugMessage = FString::Printf(TEXT("PACKET CMD : %s"), *cmd);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, DebugMessage);
+		UE_LOG(LogTemp, Log, TEXT("Send Complete PacketSize : %s"), *cmd);
+	}
 
 	DataPtr += CmdLength;
 
@@ -134,6 +138,15 @@ void PacketSession::Decode(const TArray<uint8>& SerializedData)
 
 	BodyData.Append(DataPtr, BodyLength);
 	DataPtr += BodyLength;
+
+	int32 TotalExpectedSize = 4 + 2 + CmdLength + 2 + 4 + BodyLength; // 헤더 전체 + BodyLength
+	if (SerializedData.Num() < TotalExpectedSize)
+	{
+		UE_LOG(LogTemp, Error, TEXT("SerializedData size is %d but expected %d! Not enough bytes to unpack."),
+			SerializedData.Num(), TotalExpectedSize);
+		return;
+	}
+
 	
 	PacketRegistry::HandlePacket(AsShared(), cmd, BodyData);
 }

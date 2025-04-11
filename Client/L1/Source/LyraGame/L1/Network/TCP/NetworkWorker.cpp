@@ -29,7 +29,10 @@ uint32 RecvWorker::Run()
 		{
 			if (TSharedPtr<PacketSession> Session = SessionRef.Pin())
 			{
-				Session->RecvPacketQueue.Enqueue(Packet);
+				if (Session.IsValid())
+				{
+					Session->RecvPacketQueue.Enqueue(Packet);
+				}
 			}
 		}
 
@@ -129,9 +132,15 @@ uint32 SendWorker::Run()
 		TSharedPtr<class SendBuffer> SendBuffer;
 		if (TSharedPtr<PacketSession> Session = SessionRef.Pin())
 		{
-			if (Session->SendPacketQueue.Dequeue(OUT SendBuffer))
+			if (Session.IsValid())
 			{
-				SendPacket(SendBuffer);
+				if (Session->SendPacketQueue.Dequeue(OUT SendBuffer))
+				{
+					if (SendBuffer.IsValid())
+					{
+						SendPacket(SendBuffer);
+					}
+				}
 			}
 		}
 	}

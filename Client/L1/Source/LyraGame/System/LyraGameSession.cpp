@@ -40,14 +40,14 @@ void ALyraGameSession::HandleMatchHasEnded()
 
 				if (PlayerState)
 				{
-					// FInGameUserInfo 가져오기
-					const FInGameUserInfo* UserInfo = PlayerState->GetIngameUserInfo();
-
+					if (!PlayerState->GetIngameUserInfo().IsValid())
+						continue;
+					
 					// 로그 출력
 					UE_LOG(LogLyraExperience, Log, TEXT("Player End Game Info - Nick: %s, USN: %d, TeamId: %d"),
-						*UserInfo->Nick, UserInfo->Usn, UserInfo->TeamId);
+						*PlayerState->GetIngameUserInfo()->Nick, PlayerState->GetIngameUserInfo()->Usn, PlayerState->GetIngameUserInfo()->TeamId);
 					UE_LOG(LogLyraExperience, Log, TEXT("GamePlay Stats - Kills: %d, Deaths: %d, Assists: %d"),
-						UserInfo->ingamePlayInfo.killCnt, UserInfo->ingamePlayInfo.deathCnt, UserInfo->ingamePlayInfo.assistCnt);
+						PlayerState->GetIngameUserInfo()->ingamePlayInfo.killCnt, PlayerState->GetIngameUserInfo()->ingamePlayInfo.deathCnt, PlayerState->GetIngameUserInfo()->ingamePlayInfo.assistCnt);
 				}
 			}
 		}

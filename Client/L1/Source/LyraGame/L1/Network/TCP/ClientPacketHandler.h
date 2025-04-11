@@ -21,6 +21,9 @@ public:
 	static bool Handle_FResMatchingUserCount(TSharedPtr<class PacketSession>& session, const FResMatchingUserCount& pkt);
 	static bool Handle_FResMatchingDone(TSharedPtr<class PacketSession>& session, const FResMatchingDone& pkt);
 	static bool Handle_FResIngameUserResult(TSharedPtr<class PacketSession>& session, const FResIngameUserResult& pkt);
+	static bool Handle_FResSaveIngameResult(TSharedPtr<class PacketSession>& session, const FResSaveIngameResult& pkt);
+	static bool Handle_FResDedicateShutdown(TSharedPtr<class PacketSession>& session, const FResDedicateShutdown& pkt);
+	
 
 public:
 	static TSharedPtr<class SendBuffer> MakeSendBuffer(ReqPing& pkt) { return MakeSendBuffers(pkt); }
@@ -30,6 +33,7 @@ public:
 	static TSharedPtr<class SendBuffer> MakeSendBuffer(ReqMatchingUserCount& pkt) { return MakeSendBuffers(pkt); }
 	static TSharedPtr<class SendBuffer> MakeSendBuffer(ReqMatchingDone& pkt) { return MakeSendBuffers(pkt); }
 	static TSharedPtr<class SendBuffer> MakeSendBuffer(ReqSaveIngameResult& pkt) { return MakeSendBuffers(pkt); }
+	static TSharedPtr<class SendBuffer> MakeSendBuffer(ReqDedicateShutdown& pkt) { return MakeSendBuffers(pkt); }
 
 private:
 	template<typename T>

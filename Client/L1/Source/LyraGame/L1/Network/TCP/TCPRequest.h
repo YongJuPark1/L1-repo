@@ -132,3 +132,20 @@ protected:
 		return Fields;
 	}
 };
+
+class ReqDedicateShutdown : public TCPRequest
+{
+public:
+	ReqDedicateShutdown() { packetName = "ReqDedicateShutdown"; }
+
+	int32 dediIdx;
+
+
+protected:
+	std::vector<SerializableField> GetSerializableFields() const override
+	{
+		auto Fields = TCPRequest::GetSerializableFields();
+		Fields.push_back(dediIdx);
+		return Fields;
+	}
+};

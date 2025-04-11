@@ -6,7 +6,7 @@
 #include "L1/Game/L1PlayerState.h"
 #include "L1/Game/L1GameInstance.h"
 #include "LyraLogChannels.h"
-
+#include "L1/Game/L1GameMode.h"
 
 bool ClientPacketHandler::Handle_FResPing(TSharedPtr<class PacketSession>& session, const FResPing& pkt)
 {
@@ -81,10 +81,43 @@ bool ClientPacketHandler::Handle_FResIngameUserResult(TSharedPtr<class PacketSes
 {
 	FString DebugMessage = FString::Printf(TEXT("[FResIngameUserResult] ResCode: %d"), pkt.result.resCode);
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, DebugMessage);
-
+		
 	if (auto* GameInstance = Cast<UL1GameInstance>(GWorld->GetGameInstance()))
 	{
 		//GameInstance->OnMatchingDoneResponse.Broadcast(pkt);
+	}
+
+	return true;
+}
+
+bool ClientPacketHandler::Handle_FResSaveIngameResult(TSharedPtr<class PacketSession>& session, const FResSaveIngameResult& pkt)
+{
+	FString DebugMessage = FString::Printf(TEXT("[FResSaveIngameResult] ResCode: %d"), pkt.result.resCode);
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, DebugMessage);
+
+	
+	UWorld* World = GWorld;
+	if (World && World->IsNetMode(NM_DedicatedServer))
+	{
+		AL1GameMode* GameMode = Cast<AL1GameMode>(World->GetAuthGameMode());
+		if (GameMode)
+		{
+			GameMode->ShutdownStart();
+		}
+	}
+	return true;
+}
+
+bool ClientPacketHandler::Handle_FResDedicateShutdown(TSharedPtr<class PacketSession>& session, const FResDedicateShutdown& pkt)
+{
+	UWorld* World = GWorld;
+	if (World && World->IsNetMode(NM_DedicatedServer))
+	{
+		AL1GameMode* GameMode = Cast<AL1GameMode>(World->GetAuthGameMode());
+		if (GameMode)
+		{
+			GameMode->ShutdownEnd();
+		}
 	}
 
 	return true;

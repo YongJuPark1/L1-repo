@@ -210,10 +210,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	int32 lose;
-
 	
-
 	MSGPACK_DEFINE(usn, matchingType, isAI, teamId, kill, death, assist, win, lose);
+	
 };
 
 
@@ -228,7 +227,7 @@ public:
 	FResponse result;
 
 	UPROPERTY(BlueprintReadWrite)
-	FResIngameUserInfo ingameUserInfo;
+	FResIngameUserInfo ingameUserResult;
 
 	UPROPERTY(BlueprintReadWrite)
 	int32 addRatingScore;
@@ -236,9 +235,22 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	int32 addGold;
 
-	MSGPACK_DEFINE(result.packetName, result.resCode, ingameUserInfo.usn, ingameUserInfo.matchingType, ingameUserInfo.isAI, ingameUserInfo.teamId, ingameUserInfo.kill, ingameUserInfo.death, ingameUserInfo.assist, ingameUserInfo.win, ingameUserInfo.lose, addRatingScore, addGold);
+	MSGPACK_DEFINE(result.packetName, result.resCode, ingameUserResult, addRatingScore, addGold);
+	
 };
 
+USTRUCT(BlueprintType)
+struct FResSaveIngameResult
+{
+	GENERATED_BODY()
+
+public:
+
+	UPROPERTY(BlueprintReadWrite)
+	FResponse result;
+
+	MSGPACK_DEFINE(result.packetName, result.resCode);
+};
 
 
 class LYRAGAME_API TCPResponse
@@ -247,3 +259,17 @@ public:
 	TCPResponse();
 	~TCPResponse();
 };
+
+USTRUCT(BlueprintType)
+struct FResDedicateShutdown
+{
+	GENERATED_BODY()
+
+public:
+
+	UPROPERTY(BlueprintReadWrite)
+	FResponse result;
+
+	MSGPACK_DEFINE(result.packetName, result.resCode);
+};
+
